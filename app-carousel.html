@@ -1,0 +1,156 @@
+
+<style>
+
+  :host {
+    display:                    block;
+    position:                   relative;
+    width:                      var(--carousel-width,  100%);
+    height:                     var(--carousel-height, 100%);
+    /* has to be visible, hidden or scroll, not auto */
+    overflow-x:                 var(--carousel-overflow-x, hidden); 
+    overflow-y:                 var(--carousel-overflow-y, hidden); 
+    -webkit-overflow-scrolling: touch;
+    transition:                 opacity 0.5s ease-in 0.3s; /* await first init/setup */
+    opacity:                    0;
+    --dot-size:                 var(--carousel-dot-size, 8px);
+    --translucent-background:   rgba(33, 33, 33, 0.3);
+    --container-pointer-events: auto;
+  }
+
+  #imagesContainer {
+    @apply --no-select-mixin;
+    display:        inline-flex;
+    position:       relative;
+    /* needs to be auto when carousel is behind other divs as in spriteful-header-overlay */
+    pointer-events: var(--container-pointer-events);
+  }
+
+  .same-direction-slide-transition {
+    transition: transform 0.6s ease-out;
+  }
+
+  .reverse-direction-slide-transition {
+    transition: transform 0.6s ease-in-out;
+  }
+
+  .nav-arrows {
+    position:                      absolute;
+    top:                           calc(50% - 20px);
+    border-radius:                 50%;
+    color:                         var(--carousel-ui-color,            white);
+    background-color:              var(--carousel-ui-background-color, var(--translucent-background));
+    --paper-icon-button-ink-color: var(--carousel-ui-ink-color,        #212121);
+  }
+
+  #left-chevron {
+    left: 8px;
+  }
+
+  #right-chevron {
+    right: 8px;
+  }
+
+  #dots-container {
+    display:         flex;
+    justify-content: center;
+    width:           100%;
+    position:        absolute;
+    bottom:          16px;
+    pointer-events:  none;
+  }
+
+  #dots-background {
+    display:          inline-flex;
+    position:         relative;
+    background-color: var(--carousel-ui-background-color, var(--translucent-background));
+    /*dot background height === dot size plus top and bottom dot margin, or --dot-size * 3*/
+    /*thus border-radius must be half of the height to be completely rounded*/
+    border-radius:    calc((var(--dot-size) * 3) / 2);
+  }
+
+  .dot {
+    width:            var(--dot-size);
+    height:           var(--dot-size);
+    margin-top:       var(--dot-size);
+    margin-bottom:    var(--dot-size);
+    margin-left:      var(--carousel-dot-spacing, 8px);
+    margin-right:     var(--carousel-dot-spacing, 8px);
+    border-radius:    50%;
+    background-color: var(--carousel-ui-color, white);
+    transition:       transform 0.3s ease-out;
+    transform:        scale(1, 1);
+    pointer-events:   auto;
+  }
+
+  .dot.selected {
+    transform: scale(2, 2);
+  }
+
+  .av-icons {
+    display:          flex;
+    justify-content:  center;
+    align-items:      center;
+    width:            64px;
+    height:           64px;
+    position:         absolute;
+    top:              calc(50% - 32px);
+    left:             calc(50% - 32px);
+    border-radius:    50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition:       opacity 0.2s ease-in;
+    opacity:          0;
+    pointer-events:   none;
+  }
+
+  .show-av-icon {
+    opacity: 1;
+  }
+
+  iron-icon {
+    color: var(--carousel-ui-color, white);
+  }
+
+</style>
+
+
+<div id="imagesContainer" 
+		 on-track="__imagesTracked" 
+		 on-down="__imagesOnDown">
+  <slot id="slot"></slot>
+</div>
+
+<template is="dom-if" if="[[nav]]">
+  <paper-icon-button id="left-chevron" 
+                     class="nav-arrows" 
+                     icon="app-icons:chevron-l"
+                     on-click="__leftNavArrowClicked"
+                     aria-label="Carousel left navagation">
+  </paper-icon-button>
+
+  <paper-icon-button id="right-chevron" 
+                     class="nav-arrows" 
+                     icon="app-icons:chevron-r"
+                     on-click="__rightNavArrowClicked"
+                     aria-label="Carousel right navagation">
+  </paper-icon-button>
+</template>
+
+<template is="dom-if" if="[[dots]]">
+  <div id="dots-container">
+    <div id="dots-background">
+      <template is="dom-repeat" items="[[_dotsArray]]"> 
+        <div class$="dot [[item.selected]]" on-click="__dotClicked"></div>
+      </template>
+      <paper-ripple></paper-ripple>
+    </div>
+  </div>
+</template>
+
+
+<div id="playIcon" class="av-icons">
+  <iron-icon icon="app-icons:play-arrow"></iron-icon>
+</div>
+
+<div id="stopIcon" class="av-icons">
+  <iron-icon icon="app-icons:stop"></iron-icon>
+</div>

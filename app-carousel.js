@@ -408,8 +408,13 @@ class SpritefulAppCarousel extends SpritefulMixin(GestureEventListeners(PolymerE
 
   async __imagesTracked(event) {
     await schedule();
-    const {dx, ddx, state, x} = event.detail;
-
+    const {dx, ddx, state, x, dy} = event.detail;
+    if(Math.abs(dy) > Math.abs(dx)) { 
+      if (state === 'end') {
+        this.__translateImageContainer(this._currentX);
+      }
+      return;
+    }
     switch (state) {
       case 'start':
         this._cancelFlick = true;

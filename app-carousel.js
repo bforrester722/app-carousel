@@ -358,6 +358,7 @@ class SpritefulAppCarousel extends SpritefulMixin(GestureEventListeners(PolymerE
 
   async __setImageSize() {
     const {height, width} = this.getBoundingClientRect();
+    if (!this._carouselViews) { return; }
     this._maskWidth       = width;
     this._imageWidth      = width / this.visibleImages;
     this._carouselViews.forEach(element => {

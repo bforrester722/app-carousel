@@ -1,6 +1,6 @@
 {
   "name": "@spriteful/app-carousel",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "configurable carousel with autoplay, swipe, optional nav and av buttons",
   "main": "app-carousel.js",
   "scripts": {

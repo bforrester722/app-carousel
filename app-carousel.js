@@ -358,6 +358,7 @@ class SpritefulAppCarousel extends SpritefulMixin(GestureEventListeners(PolymerE
 
   async __setImageSize() {
     const {height, width} = this.getBoundingClientRect();
+    if (!height || !width) { return; }
     if (!this._carouselViews) { return; }
     this._maskWidth       = width;
     this._imageWidth      = width / this.visibleImages;
@@ -504,7 +505,10 @@ class SpritefulAppCarousel extends SpritefulMixin(GestureEventListeners(PolymerE
       if (this._isPlaying) {
         this.__play();
       }
+      this.fire('app-carousel-nav-clicked', this);
+      await wait(100);
       this.nextSlide('left');
+
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -519,6 +523,8 @@ class SpritefulAppCarousel extends SpritefulMixin(GestureEventListeners(PolymerE
       if (this._isPlaying) {
         this.__play();
       }
+      this.fire('app-carousel-nav-clicked', this);
+      await wait(100);
       this.nextSlide('right');
     }
     catch (error) {
@@ -594,6 +600,7 @@ class SpritefulAppCarousel extends SpritefulMixin(GestureEventListeners(PolymerE
     if (direction === 'right') {
       // go back to first image if at last slide
       if (this._currentSectionIndex + 1 > this._sectionCount) {
+        this._currentSectionIndex = 0;
         if (recycle === 'recycle') {
           this._currentSectionIndex = 0;
         }
@@ -605,6 +612,7 @@ class SpritefulAppCarousel extends SpritefulMixin(GestureEventListeners(PolymerE
     else if (direction === 'left') {
       // go back to first image if at last slide
       if (this._currentSectionIndex - 1 < 0) {
+         this._currentSectionIndex = this._sectionCount;
         if (recycle === 'recycle') {
           this._currentSectionIndex = this._sectionCount;
         }
